@@ -49,8 +49,9 @@ export default function AccessCodeEmployee() {
 
     APIValidateCodeEmployee(state.email, values.accessCode)
       .then((res) => {
-        console.log(res);
+        localStorage.setItem("role", "employee");
         toast.success("Access code validated successfully");
+        navigate("/dashboard");
       })
       .catch((err) => {
         console.log(err);

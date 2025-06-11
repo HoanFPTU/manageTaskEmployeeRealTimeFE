@@ -48,6 +48,9 @@ export default function AccessCode() {
       .then((res) => {
         console.log(res);
         toast.success("Access code validated successfully");
+        localStorage.setItem("role", "owner");
+        localStorage.setItem("id", state.phoneNumber);
+        navigate("/dashboard");
       })
       .catch((err) => {
         console.log(err);
