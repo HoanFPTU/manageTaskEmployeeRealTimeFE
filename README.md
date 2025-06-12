@@ -39,7 +39,7 @@ Authentication
 ```bash
 
 # Clone the repo BE
-git clone https://github.com/hoan-dev/task-manager-app.git
+git clone https://github.com/HoanFPTU/manageTaskEmployeeRealTime.git
 
 # Navigate to the project folder
 cd BE
@@ -52,7 +52,7 @@ npm start
 
 
 # Clone the repo FE 
-git clone https://github.com/hoan-dev/task-manager-app.git
+git clone https://github.com/HoanFPTU/manageTaskEmployeeRealTimeFE.git
 
 # Navigate to the project folder
 cd InterviewFE
