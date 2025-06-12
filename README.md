@@ -22,9 +22,8 @@ Authentication
 -Login with OTP gmail, phone
 ## 🖼️ Demo Full Features Video 
 
-> 📌 *Click the image to watch full demo*
-
-[![Watch Demo](https://your-demo-thumbnail.com/preview.png)](https://your-live-demo-link.com)
+> 📌 *Click the lnik to watch full demo*
+(https://youtu.be/nzzw5sWPVWE)
 
 ---
 
