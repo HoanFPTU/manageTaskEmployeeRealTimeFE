@@ -14,6 +14,7 @@ import { ConfigProvider, Layout, Menu, theme } from "antd";
 import { useEffect, useState } from "react";
 
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { getNameById } from "../utils/utils";
 
 function getItem(label, key, icon, children) {
   return {
@@ -40,6 +41,7 @@ export default function DashBoard() {
     location.pathname.split("/")[location.pathname.split("/").length - 1];
 
   const role = localStorage.getItem("role");
+  const id = localStorage.getItem("id");
   if (!role) {
     navigate("/");
   }
@@ -70,11 +72,11 @@ export default function DashBoard() {
     }
     if (role == "employee") {
       setItems([
-        getItem("Manage Task", "manageTaskEmployee"),
+        getItem("Edit Profile", "profile"),
+        getItem("Manage Task", "manageTask"),
         //   getItem('Chiến dịch', 'category'),
         //   getItem('Hỗ trợ', 'order'),
         getItem("Message", "message"),
-        getItem("Edit Profile", "profile"),
       ]);
     }
     // if (role == 'Sales Staff') {
@@ -224,14 +226,8 @@ export default function DashBoard() {
                 lineHeight: "23px",
               }}
             >
-              <span>
-                Hi👋:
-                {/* {user?.name} */}
-              </span>
-              <p>
-                Role:
-                {/* {getRole(user?.role)} */}
-              </p>
+              <span>ID: {id}</span>
+              <p>Role: {role}</p>
             </div>
             <div
               style={{
@@ -256,8 +252,7 @@ export default function DashBoard() {
                 type="primary"
                 onClick={() => {
                   localStorage.removeItem("role");
-                  // helper.cookie_delete('AT');
-                  // dispatch(logout());
+                  localStorage.removeItem("id");
                   navigate("/");
                 }}
                 style={{

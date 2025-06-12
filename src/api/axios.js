@@ -13,8 +13,12 @@ export const APIGetEmployeeByID = (employeeId) =>
 export const APIDeleteEmployeeByID = (employeeId) =>
   api.post("deleteEmployeeById", { employeeId });
 // employee
+export const APILoginEmployee = (username, password) =>
+  api.post("loginEmployee", { username, password });
 export const APIGetAccessCodeEmployee = (email) =>
   api.post("loginEmail", { email });
+export const APIActiveAccount = (username, password, employeeId) =>
+  api.post("activeAccount", { username, password, employeeId });
 export const APIValidateCodeEmployee = (email, accessCode) =>
   api.post("validateAccessCodeEmail", { email, accessCode });
 export const APIEditEmployeeByID = (employeeId, name, department) =>
@@ -26,6 +30,9 @@ export const APIAddTask = (name, description, employees) =>
   api.post("createTask", { name, description, employees });
 export const APIEditTaskByID = (taskId, name, description, employees) =>
   api.post("editTaskById", { taskId, name, description, employees });
+export const APIDoneTaskByID = (taskId) => api.post("doneTaskById", { taskId });
 export const APIGetTaskByID = (taskId) => api.post("getTaskById", { taskId });
+export const APIGetTaskUserId = (employeeId) =>
+  api.post("getTaskByUserId", { employeeId });
 export const APIDeleteTaskByID = (taskId) =>
   api.post("deleteTaskById", { taskId });

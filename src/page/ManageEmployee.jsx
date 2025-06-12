@@ -58,6 +58,14 @@ export default function ManageEmployee() {
       },
     },
     {
+      title: "Active",
+      dataIndex: "active",
+      key: "active",
+      render: (n, o) => {
+        return <>{n ? n : "-"}</>;
+      },
+    },
+    {
       title: "Edit",
       key: "edit",
       render: (record) => (
@@ -113,7 +121,7 @@ export default function ManageEmployee() {
   };
 
   const addData = (values) => {
-    console.log(values);
+    sSpin.set(true);
     APIAddEmployee(values.name, values.department, values.email)
       .then(() => {
         toast.success("Add Employee successfully");
@@ -126,6 +134,9 @@ export default function ManageEmployee() {
           err.response?.data?.message ||
             "Something went wrong, please try again"
         );
+      })
+      .finally(() => {
+        sSpin.set(false);
       });
   };
   const updateData = (values) => {
@@ -207,6 +218,7 @@ export default function ManageEmployee() {
           title={`${dataId?.length > 1 ? "Update" : "Add New"} Employee`}
           onCancel={handleCancel}
           width={500}
+          // onOk={form.submit()}
           footer={[
             <Button key="back" onClick={handleCancel}>
               Cancel

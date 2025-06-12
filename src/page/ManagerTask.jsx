@@ -19,22 +19,27 @@ import {
 import {
   APIAddTask,
   APIDeleteTaskByID,
+  APIDoneTaskByID,
   APIEditTaskByID,
   APIGetAllEmployee,
   APIGetAllTask,
   APIGetTaskByID,
+  APIGetTaskUserId,
 } from "../api/axios";
 import {
+  CheckOutlined,
   DeleteOutlined,
   EditOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { sSpin } from "../store/spinAll";
+import { onValue, ref } from "firebase/database";
+import { db } from "../firebase/firebase";
 const sharedProps = {
   mode: "multiple",
   style: { width: "100%" },
-  placeholder: "Select Item...",
+  placeholder: "Select Employee...",
   maxTagCount: "responsive",
 };
 export default function ManagerTask() {
@@ -43,6 +48,8 @@ export default function ManagerTask() {
   const [dataTable, setDataTable] = useState(null);
   const [employees, setEmployees] = useState(null);
   const [valueSearch, setValueSearch] = useState(null);
+  const role = localStorage.getItem("role");
+  const id = localStorage.getItem("id");
   //   const [employeeSelected, setEmployeeSelected] = useState([]);
   const columns = [
     {
@@ -77,7 +84,7 @@ export default function ManagerTask() {
       render: (n, o) => {
         return (
           <>
-            {n ? (
+            {o?.done ? (
               <Progress
                 type="circle"
                 percent={100}
@@ -98,7 +105,8 @@ export default function ManagerTask() {
         );
       },
     },
-
+  ];
+  const columnsOwner = [
     {
       title: "Edit",
       key: "edit",
@@ -131,7 +139,42 @@ export default function ManagerTask() {
       ),
     },
   ];
+  const columnsEmployee = [
+    {
+      title: "Make Done",
+      key: "makeDone",
+      render: (record) => (
+        <Popconfirm
+          title="Done task"
+          description="Are you sure you want to done this task?"
+          icon={<CheckOutlined style={{ color: "green" }} />}
+          onConfirm={() => {
+            APIDoneTaskByID(record.id).then((data) => {
+              toast.success("Done task successfully");
+            });
+          }}
+          disabled={record?.done}
+        >
+          <Button
+            disabled={record?.done}
+            type="default"
+            onClick={() => {
+              console.log(record);
+            }}
+          >
+            <CheckOutlined />
+          </Button>
+        </Popconfirm>
+      ),
+    },
+  ];
+  if (role === "owner") {
+    columns.push(...columnsOwner);
+  } else {
+    columns.push(...columnsEmployee);
+  }
   const { Search } = Input;
+
   //   const selectProps = {
   //     employeeSelected,
   //     onChange: setEmployeeSelected,
@@ -144,18 +187,32 @@ export default function ManagerTask() {
     form.resetFields();
   };
   const getData = () => {
-    sSpin.set(true);
-    APIGetAllTask()
-      .then((data) => {
-        console.log(data.data?.tasks);
-        setDataTable(data.data?.tasks);
-      })
-      .catch((error) => {
-        setDataTable([]);
-      })
-      .finally(() => {
-        sSpin.set(false);
-      });
+    if (dataTable == null) {
+      sSpin.set(true);
+    }
+    role == "owner"
+      ? APIGetAllTask()
+          .then((data) => {
+            console.log(data.data?.tasks);
+            setDataTable(data.data?.tasks);
+          })
+          .catch((error) => {
+            setDataTable([]);
+          })
+          .finally(() => {
+            sSpin.set(false);
+          })
+      : APIGetTaskUserId(id)
+          .then((data) => {
+            console.log(data.data);
+            setDataTable(data.data?.data);
+          })
+          .catch((error) => {
+            setDataTable([]);
+          })
+          .finally(() => {
+            sSpin.set(false);
+          });
   };
   const getEmployee = () => {
     sSpin.set(true);
@@ -171,7 +228,7 @@ export default function ManagerTask() {
       });
   };
   const addData = (values) => {
-    console.log(values);
+    sSpin.set(true);
     APIAddTask(values.name, values.description, values.employees)
       .then(() => {
         toast.success("Add Task successfully");
@@ -184,6 +241,9 @@ export default function ManagerTask() {
           err.response?.data?.message ||
             "Something went wrong, please try again"
         );
+      })
+      .finally(() => {
+        sSpin.set(false);
       });
   };
   const updateData = (values) => {
@@ -227,6 +287,14 @@ export default function ManagerTask() {
     getEmployee();
   }, []);
   useEffect(() => {
+    const tasksRef = ref(db, `tasks`);
+    const unsubscribe = onValue(tasksRef, (snapshot) => {
+      getData();
+    });
+
+    return () => unsubscribe();
+  }, []);
+  useEffect(() => {
     if (dataId?.length > 1) {
       APIGetTaskByID(dataId).then((data) => {
         const dataCurrent = data?.data?.task;
@@ -258,9 +326,11 @@ export default function ManagerTask() {
           enterButton
           style={{ maxWidth: "600px" }}
         />
-        <Button type="primary" onClick={() => setDataId("0")}>
-          Add new Task
-        </Button>
+        {role == "owner" && (
+          <Button type="primary" onClick={() => setDataId("0")}>
+            Add new Task
+          </Button>
+        )}
         <Modal
           title={`${dataId?.length > 1 ? "Update" : "Add New"} Task`}
           visible={dataId ? true : false}

@@ -21,4 +21,4 @@ const app =
   getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const db = getDatabase(app);
 const analytics = getAnalytics(app);
-export { app, analytics };
+export { db, app, analytics };

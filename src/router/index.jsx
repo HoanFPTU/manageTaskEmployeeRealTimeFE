@@ -1,6 +1,11 @@
 import React from "react";
 import Login from "../page/login";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+  useNavigate,
+} from "react-router-dom";
 import LoginEmployee from "../page/LoginEmployee";
 import AccessCode from "../page/AccessCode";
 import AccessCodeEmployee from "../page/AccessCodeEmployee";
@@ -8,6 +13,19 @@ import DashBoard from "../page/Dashboard";
 import ManageEmployee from "../page/ManageEmployee";
 import ManagerTask from "../page/ManagerTask";
 import Message from "../page/Message";
+import EditProfile from "../page/EditProfile";
+import ActiveAccount from "../page/ActiveAccount";
+
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  // const navigate = useNavigate();
+  const role = localStorage.getItem("role");
+
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+};
+
 export default function AppRouter() {
   const router = createBrowserRouter([
     {
@@ -25,6 +43,10 @@ export default function AppRouter() {
     {
       path: "/accessCodeEmployee",
       element: <AccessCodeEmployee />,
+    },
+    {
+      path: "/activeAccount",
+      element: <ActiveAccount />,
     },
     {
       path: "/dashboard",
@@ -46,9 +68,15 @@ export default function AppRouter() {
           element: <ManagerTask />,
           // index: true
         },
+
         {
           path: "/dashboard/message",
           element: <Message />,
+          // index: true
+        },
+        {
+          path: "/dashboard/profile",
+          element: <EditProfile />,
           // index: true
         },
       ],
